@@ -1,5 +1,6 @@
 package se.lexicon;
 
+import java.awt.image.AreaAveragingScaleFilter;
 import java.util.Arrays;
 
 /**
@@ -62,8 +63,8 @@ public class NameRepository {
      */
     public static String find(String fullName) {
         //todo: implement find method
-        for (String name : NameRepository.names){
-            if (fullName.toLowerCase().equals(name.toLowerCase())){
+        for (String name : NameRepository.names) {
+            if (fullName.toLowerCase().equals(name.toLowerCase())) {
                 return name;
             }
         }
@@ -71,65 +72,130 @@ public class NameRepository {
     }
 
 
-/**
- * Adds a new fullName to the names array if it doesn't already exist.
- *
- * @param fullName The full name to add.
- * @return True if the fullName is added successfully; false if it already exists.
- */
-public static boolean add(String fullName) {
-    //todo: implement add method
-    return false;
-}
+    /**
+     * Adds a new fullName to the names array if it doesn't already exist.
+     *
+     * @param fullName The full name to add.
+     * @return True if the fullName is added successfully; false if it already exists.
+     */
+    public static boolean add(String fullName) {
+        //todo: implement add method
+        for (String name : NameRepository.names) {
+            if (name.equals(fullName)) {
+                return false;
+            }
+        }
+        NameRepository.names = Arrays.copyOf(NameRepository.names, NameRepository.names.length + 1);
+        NameRepository.names[NameRepository.names.length - 1] = fullName;
+        return true;
+    }
 
 
-/**
- * Find all names that match the given firstName.
- *
- * @param firstName The first name to search for.
- * @return An array containing all matching names.
- */
-public static String[] findByFirstName(String firstName) {
-    //todo: findByFirstName method
-    return null;
-}
+    /**
+     * Find all names that match the given firstName.
+     *
+     * @param firstName The first name to search for.
+     * @return An array containing all matching names.
+     */
+    public static String[] findByFirstName(String firstName) {
+        //todo: findByFirstName method
+        String[] matchingNames = new String[0];
+        for (String fullName : NameRepository.names) {
+            if (fullName.substring(0, fullName.indexOf(" ")).equalsIgnoreCase(firstName)) {
+                matchingNames = Arrays.copyOf(matchingNames, matchingNames.length + 1);
+                matchingNames[matchingNames.length - 1] = fullName;
+            }
+        }
+        if (matchingNames.length > 0) {
+            return matchingNames;
+        } else {
+            return null;
+        }
+    }
 
 
-/**
- * Find all names that match the given lastName.
- *
- * @param lastName The last name to search for.
- * @return An array containing all matching names.
- */
-public static String[] findByLastName(String lastName) {
-    //todo: implement findByLastName method
-    return null;
-}
+    /**
+     * Find all names that match the given lastName.
+     *
+     * @param lastName The last name to search for.
+     * @return An array containing all matching names.
+     */
+    public static String[] findByLastName(String lastName) {
+        //todo: implement findByLastName method
+        String[] matchingNames = new String[0];
+        for (String fullName : NameRepository.names) {
+            if (fullName.substring(fullName.indexOf(" ") + 1).equalsIgnoreCase(lastName)) {
+                matchingNames = Arrays.copyOf(matchingNames, matchingNames.length + 1);
+                matchingNames[matchingNames.length - 1] = fullName;
+            }
+        }
+        if (matchingNames.length > 0) {
+            return matchingNames;
+        } else {
+            return null;
+        }
+    }
 
 
-/**
- * Updates a name in the names array from the original name to the updated name.
- *
- * @param original    The original name to update.
- * @param updatedName The updated name to set.
- * @return True if the name is updated successfully; false if the updated name already exists or the original name is not found.
- */
-public static boolean update(String original, String updatedName) {
-    //todo: implement update method
-    return false;
-}
+    /**
+     * Updates a name in the names array from the original name to the updated name.
+     *
+     * @param original    The original name to update.
+     * @param updatedName The updated name to set.
+     * @return True if the name is updated successfully; false if the updated name already exists or the original name is not found.
+     */
+    public static boolean update(String original, String updatedName) {
+        //todo: implement update method
+        for (int i = 0; i < NameRepository.names.length; i++) {
+            if (NameRepository.names[i].equalsIgnoreCase(original)) {
+                if (NameRepository.names[i].equals(updatedName)) {
+                    return false;
+                } else {
+                    NameRepository.names[i] = updatedName;
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
+    /**
+     * Removes a name from the names array, case-insensitively.
+     *
+     * @param fullName The full name to remove.
+     * @return True if the name is removed successfully; false if the name is not found in the array.
+     * skapa en ny array som är en indexpostion kortare än names
+     * kolla om namnet finns i arrayen
+     * om namnet finns ska det inte med i den nya arrayen
+     * alla andra namn ska med i den nya arrayen
+     */
+    public static boolean remove(String fullName) {
+        //todo: implement remove method
+        boolean shouldReturn = false;
+        String[] newNames = new String[NameRepository.names.length];
+        for (String name : NameRepository.names){
+            if (name.equalsIgnoreCase(fullName)){
+                newNames = new String[NameRepository.names.length - 1];
+                break;
+            }
+        }
 
-/**
- * Removes a name from the names array, case-insensitively.
- *
- * @param fullName The full name to remove.
- * @return True if the name is removed successfully; false if the name is not found in the array.
- */
-public static boolean remove(String fullName) {
-    //todo: implement remove method
-    return false;
-}
-
+        for (int i = 0, j = 0; i < NameRepository.names.length; i++) {
+            if (!NameRepository.names[i].equalsIgnoreCase(fullName)) {
+                System.out.println(NameRepository.names[i]);
+                newNames[j] = NameRepository.names[i];
+                j++;
+                System.out.println(j);
+            }else {
+                shouldReturn = true;
+            }
+        }
+        if (shouldReturn){
+            NameRepository.setNames(newNames);
+            return true;
+        }else {
+            return false;
+        }
+    }
 
 }
