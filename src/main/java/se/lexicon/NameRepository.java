@@ -64,7 +64,7 @@ public class NameRepository {
     public static String find(String fullName) {
         //todo: implement find method
         for (String name : NameRepository.names) {
-            if (fullName.toLowerCase().equals(name.toLowerCase())) {
+            if (fullName.equalsIgnoreCase(name)) {
                 return name;
             }
         }
@@ -173,19 +173,14 @@ public class NameRepository {
         //todo: implement remove method
         boolean shouldReturn = false;
         String[] newNames = new String[NameRepository.names.length];
-        for (String name : NameRepository.names){
-            if (name.equalsIgnoreCase(fullName)){
-                newNames = new String[NameRepository.names.length - 1];
-                break;
-            }
+        if (find(fullName) != null){
+            newNames = new String[NameRepository.names.length - 1];
         }
 
         for (int i = 0, j = 0; i < NameRepository.names.length; i++) {
             if (!NameRepository.names[i].equalsIgnoreCase(fullName)) {
-                System.out.println(NameRepository.names[i]);
                 newNames[j] = NameRepository.names[i];
                 j++;
-                System.out.println(j);
             }else {
                 shouldReturn = true;
             }

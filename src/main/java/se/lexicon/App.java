@@ -13,7 +13,7 @@ public class App {
         // call more methods as needed
         //        NameRepository.clear();
         //        System.out.println(NameRepository.getSize());
-        System.out.println(Arrays.toString(NameRepository.findAll()));
+        System.out.println("findAll: " + Arrays.toString(NameRepository.findAll()));
         System.out.println(NameRepository.find("mehrdad javan"));
         System.out.println("Adding name: " + NameRepository.add("Ylva Högblom"));
         System.out.println("Adding name: " + NameRepository.add("ivar Högblom"));
