@@ -1,6 +1,5 @@
 package se.lexicon;
 
-import java.awt.image.AreaAveragingScaleFilter;
 import java.util.Arrays;
 
 /**
@@ -80,14 +79,14 @@ public class NameRepository {
      */
     public static boolean add(String fullName) {
         //todo: implement add method
-        for (String name : NameRepository.names) {
-            if (name.equals(fullName)) {
+
+        if (find(fullName) != null){
                 return false;
-            }
+            }else {
+            NameRepository.names = Arrays.copyOf(NameRepository.names, NameRepository.names.length + 1);
+            NameRepository.names[NameRepository.names.length - 1] = fullName;
+            return true;
         }
-        NameRepository.names = Arrays.copyOf(NameRepository.names, NameRepository.names.length + 1);
-        NameRepository.names[NameRepository.names.length - 1] = fullName;
-        return true;
     }
 
 
@@ -179,18 +178,21 @@ public class NameRepository {
 
         for (int i = 0, j = 0; i < NameRepository.names.length; i++) {
             if (!NameRepository.names[i].equalsIgnoreCase(fullName)) {
-                newNames[j] = NameRepository.names[i];
-                j++;
+                newNames[j++] = NameRepository.names[i];
             }else {
                 shouldReturn = true;
             }
         }
         if (shouldReturn){
-            NameRepository.setNames(newNames);
+            setNames(newNames);
             return true;
         }else {
             return false;
         }
+    }
+
+    public static String[] getArray(){
+        return NameRepository.names;
     }
 
 }
