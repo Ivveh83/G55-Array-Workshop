@@ -18,7 +18,12 @@ public class NameRepository {
      */
     public static int getSize() {
         //todo: implement getSize method
-        return names.length;
+        try {
+            return names.length;
+        }catch (NullPointerException e){
+            return 0;
+
+        }
     }
 
 
@@ -29,7 +34,10 @@ public class NameRepository {
      */
     public static void setNames(String[] names) {
         //todo: implement setNames method
-        NameRepository.names = names;
+        if (names == null){
+            NameRepository.clear();
+        }
+            NameRepository.names = names;
     }
 
 
@@ -49,8 +57,13 @@ public class NameRepository {
      */
     public static String[] findAll() {
         //todo: implement findAll method
-        String[] newArray = Arrays.copyOf(NameRepository.names, NameRepository.names.length);
-        return newArray;
+        int size = 0;
+        try {
+          size = NameRepository.names.length;
+        }catch (NullPointerException e){
+            return new String[size];
+        }
+        return Arrays.copyOf(NameRepository.names, size);
     }
 
 
@@ -105,11 +118,7 @@ public class NameRepository {
                 matchingNames[matchingNames.length - 1] = fullName;
             }
         }
-        if (matchingNames.length > 0) {
-            return matchingNames;
-        } else {
-            return null;
-        }
+        return matchingNames;
     }
 
 
@@ -128,11 +137,7 @@ public class NameRepository {
                 matchingNames[matchingNames.length - 1] = fullName;
             }
         }
-        if (matchingNames.length > 0) {
-            return matchingNames;
-        } else {
-            return null;
-        }
+        return matchingNames;
     }
 
 
