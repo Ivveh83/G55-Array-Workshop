@@ -1,130 +1,165 @@
 package se.lexicon;
 
-
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import java.util.Arrays;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * JUnit 5 tests for the NameRepository class.
  */
 public class NameRepositoryTest {
 
-    @Test
-    void testGetSize(){
-        //Arrange, Act, Assert
-        //Arrange, Act
-        int result = NameRepository.getSize();
+    @BeforeEach
+    void setUp() {
+        // Återställ till ett känt tillstånd före varje test
+        NameRepository.clear();
+        NameRepository.add("Ivar Högblom"); // Standarddata för tester
+    }
 
-        //Assert
-        assertEquals(1, result, "Arrayen har 1 namn så borde vara 1");
+    // --- Befintliga tester med förbättringar ---
+
+    @Test
+    void testGetSize() {
+        assertEquals(1, NameRepository.getSize(), "Arrayen har 1 namn efter setUp");
     }
 
     @Test
-    void testSetNames(){
-
-//        Arrange
+    void testSetNames() {
         String[] names = {"Erik Svensson", "Mehrdad Javan"};
-//        Act
         NameRepository.setNames(names);
-//        Assert
-        assertEquals(names, names, "Array in - Array out");
-
+        assertArrayEquals(names, NameRepository.findAll(),
+                "findAll borde returnera samma array som sattes med setNames");
+        // Förbättring: Jämför med findAll istället för names mot sig själv
     }
 
     @Test
-    void testClear(){
-//        Arrange
-        String[] emptyArray = {};
-        int y = emptyArray.length;
-//        Act
+    void testClear() {
         NameRepository.clear();
-        String[] testArray = NameRepository.findAll();
-        int x = testArray.length;
-//        Assert
-        assertEquals(x, y, "Clears the array");
+        assertEquals(0, NameRepository.getSize(), "Arrayen borde vara tom efter clear");
+        assertArrayEquals(new String[0], NameRepository.findAll(),
+                "findAll borde returnera en tom array efter clear");
     }
 
     @Test
-    void testFindAll(){
-//        Arrange
-        String[] array = {};
-//        Act
-        String[] testArray = NameRepository.findAll();
-//        Assert
-        assertEquals(Arrays.toString(array), Arrays.toString(testArray), "Gives an empty array");
+    void testFindAll() {
+        assertArrayEquals(new String[]{"Ivar Högblom"}, NameRepository.findAll(),
+                "findAll borde returnera arrayen med Ivar Högblom från setUp");
     }
 
     @Test
-    void testFind(){
-
-        NameRepository.add("Ivar Högblom");
-        String[] array = NameRepository.getArray();
-
+    void testFind() {
         String name = NameRepository.find("Ivar Högblom");
-
-        assertEquals(array[0], name, "Both should be \"Ivar Högblom\"");
+        assertEquals("Ivar Högblom", name, "find borde returnera Ivar Högblom");
     }
 
-    void testAdd(){
-
-//        Arrange
-        String name = "Barry Potter";
-        boolean boolean1 = true;
-//        Act
-        boolean boolean2 = NameRepository.add(name);
-//        Assert
-        assertEquals(boolean1, boolean2, "Name should not be in array, so should give return true");
-    }
-    @Test
-    void testFindByFirstName(){
-//        Arrange
-        String[] name1 = {"Ivar Högblom"};
-//        Act
-        String[] name2 = NameRepository.findByFirstName("Ivar");
-//        Assert
-        assertEquals(Arrays.toString(name1), Arrays.toString(name2), "Input Ivar should return" +
-                "array [Ivar Högblom]");
-    }
-    @Test
-    void testFindByLastName(){
-        //        Arrange
-        String[] name1 = {"Ivar Högblom"};
-//        Act
-        NameRepository.add("Ivar Högblom");
-        String[] name2 = NameRepository.findByLastName("Högblom");
-//        Assert
-        assertEquals(Arrays.toString(name1), Arrays.toString(name2), "Input Högblom should return " +
-                "array [Ivar Högblom]");
+    @Test // Fixade: Lade till @Test-annotering som saknades
+    void testAdd() {
+        boolean result = NameRepository.add("Barry Potter");
+        assertTrue(result, "add borde returnera true för ett nytt namn");
+        assertEquals(2, NameRepository.getSize(), "Storleken borde öka till 2");
     }
 
     @Test
-    void testUpdate(){
-//        Arrange
+    void testFindByFirstName() {
+        String[] result = NameRepository.findByFirstName("Ivar");
+        assertArrayEquals(new String[]{"Ivar Högblom"}, result,
+                "findByFirstName borde returnera [Ivar Högblom]");
+    }
+
+    @Test
+    void testFindByLastName() {
+        String[] result = NameRepository.findByLastName("Högblom");
+        assertArrayEquals(new String[]{"Ivar Högblom"}, result,
+                "findByLastName borde returnera [Ivar Högblom]");
+    }
+
+    @Test
+    void testUpdate() {
+        NameRepository.update("Ivar Högblom", "Harry Potter");
+        String[] result = NameRepository.findAll();
+        assertArrayEquals(new String[]{"Harry Potter"}, result,
+                "Arrayen borde uppdateras till [Harry Potter]");
+    }
+
+    @Test
+    void testRemove() {
+        boolean result = NameRepository.remove("Ivar Högblom");
+        assertTrue(result, "remove borde returnera true för befintligt namn");
+        assertEquals(0, NameRepository.getSize(), "Arrayen borde vara tom efter remove");
+    }
+
+    // --- Nya tester ---
+
+    @Test
+    void testGetSizeWithEmptyArray() {
         NameRepository.clear();
-        NameRepository.add("Barry Potter");
-        String[] testArray = {"Harry Potter"};
-//        Act
-        NameRepository.update("Barry Potter", "Harry Potter");
-        String[] array = NameRepository.getArray();
-//        Assert
-        assertEquals(Arrays.toString(testArray), Arrays.toString(array), "Cleared array and added" +
-                " Barry Potter to it, updated to Harry Potter, so they should be same");
+        assertEquals(0, NameRepository.getSize(), "Storleken borde vara 0 för en tom array");
     }
 
     @Test
-    void testRemove(){
-//        Arrange
-        String name = "Morgan Alling";
-        NameRepository.add(name);
-        boolean boolean1 = true;
-//        Act
-        boolean boolean2 = NameRepository.remove(name);
-//        Assert
-        assertEquals(boolean1, boolean2, "Adding name to NameRepository and after that removing it, " +
-                " which should return true");
+    void testAddDuplicateName() {
+        boolean result = NameRepository.add("Ivar Högblom"); // Försök lägga till samma namn igen
+        assertFalse(result, "add borde returnera false för ett dubblettnamn");
+        assertEquals(1, NameRepository.getSize(), "Storleken borde inte öka vid dubblett");
     }
 
+    @Test
+    void testFindNonExistingName() {
+        String result = NameRepository.find("Anna Andersson");
+        assertNull(result, "find borde returnera null för ett namn som inte finns");
+    }
+
+    @Test
+    void testFindByFirstNameNoMatch() {
+        String[] result = NameRepository.findByFirstName("Anna");
+        assertArrayEquals(new String[0], result,
+                "findByFirstName borde returnera en tom array om inget namn matchar");
+    }
+
+    @Test
+    void testFindByLastNameNoMatch() {
+        String[] result = NameRepository.findByLastName("Andersson");
+        assertArrayEquals(new String[0], result,
+                "findByLastName borde returnera en tom array om inget namn matchar");
+    }
+
+    @Test
+    void testUpdateNonExistingName() {
+        boolean result = NameRepository.update("Anna Andersson", "Anna Svensson");
+        assertFalse(result, "update borde returnera false om originalnamnet inte finns");
+        assertArrayEquals(new String[]{"Ivar Högblom"}, NameRepository.findAll(),
+                "Arrayen borde inte ändras vid misslyckad update");
+    }
+
+    @Test
+    void testRemoveNonExistingName() {
+        boolean result = NameRepository.remove("Anna Andersson");
+        assertFalse(result, "remove borde returnera false om namnet inte finns");
+        assertEquals(1, NameRepository.getSize(), "Storleken borde inte ändras");
+    }
+
+    @Test
+    void testSetNamesWithNull() {
+        NameRepository.setNames(null);
+        assertEquals(0, NameRepository.getSize(), "setNames(null) borde resultera i en tom array");
+        assertArrayEquals(new String[0], NameRepository.findAll(),
+                "findAll borde returnera en tom array efter setNames(null)");
+    }
+
+    @Test
+    void testFindByFirstNameMultipleMatches() {
+        NameRepository.add("Ivar Andersson");
+        String[] result = NameRepository.findByFirstName("Ivar");
+        assertArrayEquals(new String[]{"Ivar Högblom", "Ivar Andersson"}, result,
+                "findByFirstName borde returnera alla namn med förnamnet Ivar");
+    }
+
+    @Test
+    void testFindByLastNameMultipleMatches() {
+        NameRepository.add("Anna Högblom");
+        String[] result = NameRepository.findByLastName("Högblom");
+        assertArrayEquals(new String[]{"Ivar Högblom", "Anna Högblom"}, result,
+                "findByLastName borde returnera alla namn med efternamnet Högblom");
+    }
 }
